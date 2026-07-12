@@ -1,0 +1,14 @@
+export interface StartupListing {
+  id: string | number;
+  startup_name: string;
+  category: string;
+  short_description: string;
+  revenue_30d: string;
+  asking_price: string;
+  multiple: string;
+  source_platform: string; // e.g., 'trustmrr'
+  original_url: string;
+  created_at?: string;
+  is_best_deal?: boolean;
+  slug?: string;
+}

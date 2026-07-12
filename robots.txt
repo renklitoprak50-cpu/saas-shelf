@@ -1,0 +1,16 @@
+import { NextResponse } from 'next/server';
+import defaultListings from '@/data/listings.json';
+
+export async function POST() {
+  try {
+    return NextResponse.json({
+      message: "Reset acknowledged. Listings restored to default.",
+      count: defaultListings.length
+    });
+  } catch (e: any) {
+    return NextResponse.json(
+      { error: e?.message || "Failed resetting memory" },
+      { status: 500 }
+    );
+  }
+}

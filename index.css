@@ -1,0 +1,202 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { X, ShieldCheck, FileText, Scale, Eye, Cookie, Info } from 'lucide-react';
+
+interface ComplianceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialTab?: 'privacy' | 'terms' | 'adsense';
+}
+
+export default function ComplianceModal({ isOpen, onClose, initialTab = 'privacy' }: ComplianceModalProps) {
+  const [activeTab, setActiveTab] = useState<'privacy' | 'terms' | 'adsense'>(initialTab);
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <motion.div
+          id="compliance-modal-container"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="bg-white w-full max-w-3xl rounded-3xl border border-slate-200 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden"
+        >
+          {/* Header */}
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100/50">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-display font-black text-slate-800 text-sm md:text-base">Mevzuat &amp; Yasal Uyumluluk</h3>
+                <p className="text-[11px] text-slate-400 font-mono">Google AdSense, KVKK &amp; GDPR Çerez Politikaları</p>
+              </div>
+            </div>
+            <button
+              id="close-compliance-modal-btn"
+              onClick={onClose}
+              className="p-1 px-2.5 py-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Navigation Bar inside modal */}
+          <div className="px-5 py-2.5 bg-slate-50/80 border-b border-slate-100 flex gap-1.5 overflow-x-auto text-xs shrink-0">
+            <button
+              id="compliance-tab-privacy"
+              onClick={() => setActiveTab('privacy')}
+              className={`px-4 py-2 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+                activeTab === 'privacy' 
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10' 
+                  : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800'
+              }`}
+            >
+              <Eye className="w-3.5 h-3.5" />
+              Gizlilik Politikası
+            </button>
+            <button
+              id="compliance-tab-adsense"
+              onClick={() => setActiveTab('adsense')}
+              className={`px-4 py-2 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+                activeTab === 'adsense' 
+                  ? 'bg-amber-600 text-white shadow-md shadow-amber-600/10' 
+                  : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800'
+              }`}
+            >
+              <Cookie className="w-3.5 h-3.5" />
+              AdSense &amp; Çerezler
+            </button>
+            <button
+              id="compliance-tab-terms"
+              onClick={() => setActiveTab('terms')}
+              className={`px-4 py-2 rounded-xl font-bold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 ${
+                activeTab === 'terms' 
+                  ? 'bg-slate-900 text-white shadow-md' 
+                  : 'text-slate-600 hover:bg-slate-200/50 hover:text-slate-800'
+              }`}
+            >
+              <Scale className="w-3.5 h-3.5" />
+              Kullanım Koşulları
+            </button>
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 overflow-y-auto p-6 text-sm text-slate-600 leading-relaxed space-y-6 font-sans">
+            
+            {activeTab === 'privacy' && (
+              <div className="space-y-4">
+                <h4 className="font-display font-extrabold text-slate-800 text-base border-b border-slate-100 pb-2">Gizlilik Politikası / Privacy Policy</h4>
+                <p className="text-xs text-slate-400 font-mono">Son Güncelleme: 21 Haziran 2026</p>
+                
+                <p>
+                  <strong>SaaShelf</strong> olarak kişisel verilerinizin güvenliği ve gizliliği bizim için en üst düzeyde önem taşır. Bu politika, sitemizde hangi verilerin toplandığını, nasıl kullanıldığını ve sitemizi kullanan sizlerin haklarını şeffaf bir şekilde açıklamaktadır.
+                </p>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">1. Toplanan Veriler</h5>
+                <p>
+                  SaaShelf, herhangi bir doğrudan kullanıcı kayıt sistemi (opsiyonel üyelik süreçleri hariç) barındırmayan, listeleme ve affiliate bazlı bir dizin sitesidir. Sitemizi ziyaret ettiğinizde, sistem performansını iyileştirmek, kullanıcı deneyimini optimize etmek ve reklam gösterimlerini entegre etmek amacıyla yalnızca gerekli çerez tabanlı anonim veriler (IP adresi, tarayıcı türü, ziyaret süresi, tıklanan harici bağlantılar) işlenmektedir.
+                </p>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">2. Google AdSense &amp; Üçüncü Taraf İş Ortakları</h5>
+                <p className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-900 text-xs">
+                  <strong>Kritik Bilgilendirme:</strong> Üçüncü taraf satıcı olarak Google, sitemizde reklam yayınlamak için çerezlerden yararlanır. Google'ın reklam çerezlerini kullanması, sizlerin sitemize ve/veya internetteki diğer sitelere yaptığınız ziyaretlere dayanarak size ve diğer kullanıcılara ilgi alanlarına göre kişiselleştirilmiş reklamlar sunmasına olanak tanır.
+                  <br /><br />
+                  Kullanıcılar, Google'ın sunduğu <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" className="underline font-bold text-amber-700">Reklam Ayarları</a> sayfasını ziyaret ederek kişiselleştirilmiş reklamcılık gösterimini tamamen devre dışı bırakabilirler.
+                </p>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">3. Veri Güvenliği</h5>
+                <p>
+                  Kullanıcı verilerimizin tamamı güncel SSL/TLS güvenlik korumaları ve şifrelenmiş altyapı aracılığıyla muhafaza edilmektedir. Sitemizden yapılan harici yönlendirmeler (affiliate bağlantıları), yönlendirilen tarafın kendi bağımsız gizlilik ilkelerine tabidir. Bağlantılara tıklamadan önce ilgili sitelerin politikalarını okumanız önerilir.
+                </p>
+              </div>
+            )}
+
+            {activeTab === 'adsense' && (
+              <div className="space-y-4">
+                <h4 className="font-display font-extrabold text-slate-800 text-base border-b border-slate-100 pb-2 flex items-center gap-1.5">
+                  <span>Google AdSense &amp; Çerez Politikası</span>
+                  <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">Google Onaylı Şablon</span>
+                </h4>
+                <p className="text-xs text-slate-400 font-mono">Son Güncelleme: 21 Haziran 2026</p>
+
+                <div className="bg-indigo-50/50 border border-indigo-100/80 rounded-2xl p-4 flex gap-3 text-indigo-900 text-xs">
+                  <Info className="w-5 h-5 shrink-0 text-indigo-600" />
+                  <div>
+                    <span className="font-bold block mb-1">AdSense Başvurusu İçin Zorunludur:</span>
+                    Bu politikadaki açıklamalar, Google AdSense politikalarının &quot;Kullanıcı Rızası&quot; ve &quot;Kişisel Reklamcılık Çerezleri&quot; maddelerine tamamen uyumlu olarak hazırlanmıştır.
+                  </div>
+                </div>
+
+                <p>
+                  Sitemiz, sitemizi ziyaret eden kullanıcılara görsel ve metinsel reklamlar servis edebilmek adına <strong>Google AdSense</strong> sistemi kullanmaktadır. Bu bağlamda çerezlerin rolü aşağıda detaylandırılmıştır:
+                </p>
+
+                <div className="space-y-3 pl-3 border-l-2 border-slate-200">
+                  <p>
+                    <strong>Cookie (Çerez) Nedir?</strong> Çerezler sitemizi ziyaret ederken tarayıcınıza yerleştirilen küçük metin dosyalarıdır.
+                  </p>
+                  <p>
+                    <strong>Google dART Çerezi Kullanımı:</strong> Google, dART çerezleri sayesindeki teknolojiler yardımıyla sizlere, hem sitemize hem de diğer tüm internet sitelerine yaptığınız ziyaret bilgilerine bağlı olarak özel reklamlar gösterebilir.
+                  </p>
+                  <p>
+                    <strong>Çerezleri Nasıl Kapatırım?</strong> Tarayıcı ayarlarınızdan çerezleri tamamen engelleyebilir veya harici bir uygulama kullanarak <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline font-semibold">AboutAds</a> platformu üzerinden üçüncü taraf çerez ayarlarını özelleştirebilirsiniz.
+                  </p>
+                </div>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">Yasal Dayanak</h5>
+                <p className="text-xs text-slate-500">
+                  Bu çerez aydınlatma formu, 6698 Sayılı Kişisel Verilerin Korunması Kanunu (KVKK), Avrupa Birliği Genel Veri Koruma Tüzüğü (GDPR) ve Google Yayıncı Politikaları kapsamında belirlenen şartlara uygun yürütülmektedir.
+                </p>
+              </div>
+            )}
+
+            {activeTab === 'terms' && (
+              <div className="space-y-4">
+                <h4 className="font-display font-extrabold text-slate-800 text-base border-b border-slate-100 pb-2">Kullanım Koşulları / Terms of Use</h4>
+                <p className="text-xs text-slate-400 font-mono">Son Güncelleme: 21 Haziran 2026</p>
+
+                <p>
+                  SaaShelf web sitesine erişerek ve bu platformu kullanarak aşağıdaki genel kullanım şartlarını koşulsuz kabul etmiş sayılırsınız:
+                </p>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">1. Hizmet Kapsamı</h5>
+                <p>
+                  SaaShelf; aktif SaaS, internet siteleri, mobil uygulamalar, e-ticaret siteleri ve diğer bağımsız web girişimlerinin takas değerlerini, satış bültenlerini ve affiliate programlarını listeleyen bağımsız bir bilgi arayüzüdür. Verilen bilgilerin güncelliği platformumuzca doğrulanmaya çalışılmakla birlikte, nihai satın alımlarda ve finansal işlemlerde alıcının kendi araştırmasını yapması gerekmektedir.
+                </p>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">2. Yönlendirmeler ve İçiçe Linkler</h5>
+                <p>
+                  Sitede yer alan bazı bağlantılar sponsorlu bağlantı veya affiliate bağlantısıdır. Bu linklerden birine tıklayıp bir satın alma veya devir gerçekleştirdiğinizde SaaShelf belirli bir komisyon kazanabilir. Bu durum, nihai alıcıya ek bir maliyet yüklemez.
+                </p>
+
+                <h5 className="font-bold text-slate-800 text-xs uppercase tracking-wider">3. Sorumluluk Reddi (Disclaimer)</h5>
+                <p className="text-xs text-slate-500 italic bg-slate-50 border border-slate-100 p-3 rounded-lg">
+                  SaaShelf üzerinde yayınlanan hiçbir içerik, grafik veya listeleme &quot;yatırım tavsiyesi&quot; niteliği taşımaz. Herhangi bir marka devri veya satın alma kararı vermeden önce yetkin finansal danışmanlardan görüş almanız kritik bir gerekliliktir.
+                </p>
+              </div>
+            )}
+
+          </div>
+
+          {/* Footer of modal */}
+          <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between shrink-0">
+            <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-500" />
+              SaaShelf Secure and Compliant Registry.
+            </span>
+            <button
+              id="compliance-modal-close-bottom-btn"
+              onClick={onClose}
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-md cursor-pointer transition-all"
+            >
+              Anladım ve Kapat
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}

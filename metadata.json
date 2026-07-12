@@ -1,0 +1,452 @@
+// Client-side static fallback listings to ensure 100% serverless Vercel compatibility
+import { StartupListing } from '../types';
+
+export const RAW_CSV_DATA = `startup_name,category,revenue_30d,asking_price,multiple,original_url
+Outstand.so,Developer Tools,$6.2k,$130k,1.7x,https://trustmrr.com/startup/outstand-so
+Backlinker AI,Marketing,$23k,$350k,1.3x,https://trustmrr.com/startup/backlinker-ai
+NextjobConnect LLC,SaaS,$5.8k,$100k,1.4x,https://trustmrr.com/startup/nextjobconnect-llc
+Atlas,Artificial Intelligence,$22k,$1.3M,4.7x,https://trustmrr.com/startup/atlas
+Fiddl.art,Content Creation,$28k,$1.1M,3.4x,https://trustmrr.com/startup/fiddl-art
+Chatwith,Customer Support,$4.2k,$147k,2.9x,https://trustmrr.com/startup/chatwith
+POST BRIDGE,Social Media,$41k,$4.2M,8.6x,https://trustmrr.com/startup/post-bridge
+VoiceType.com,Artificial Intelligence,$6.5k,$219k,2.8x,https://trustmrr.com/startup/voicetype-com
+RunAds.ai,Marketing,$11k,$200k,1.5x,https://trustmrr.com/startup/runads-ai
+IPTV Player & VPN App Bundle,Mobile Apps,$14k,$500k,2.9x,https://trustmrr.com/startup/iptv-player-vpn-app-bundle
+Chariot AI,Artificial Intelligence,$15k,$375k,2.1x,https://trustmrr.com/startup/chariot-ai
+Private Venture,Mobile Apps,$4.8k,$129k,2.2x,https://trustmrr.com/startup/anonymous-startup-6a307f
+Synta,SaaS,$13k,$200k,1.3x,https://trustmrr.com/startup/synta
+Rumora,Marketing,$4k,$100k,2.1x,https://trustmrr.com/startup/rumora
+ColdSire,SaaS,$17k,$215k,1.1x,https://trustmrr.com/startup/coldsire
+Private Enterprise,Artificial Intelligence,$50k,$1.5M,2.5x,https://trustmrr.com/startup/private-enterprise-21
+Yazcam,Mobile Apps,$8.5k,$265k,2.6x,https://trustmrr.com/startup/yazcam
+Stealth Company,Content Creation,$18k,$1M,4.7x,https://trustmrr.com/startup/wava-ai
+Mobile App,Mobile Apps,$31k,$350k,0.9x,https://trustmrr.com/startup/mobile-app-4
+Marky,Content Creation,$22k,$495k,1.9x,https://trustmrr.com/startup/marky
+BYQ Supply,SaaS,$14k,$495k,3.1x,https://trustmrr.com/startup/byq-supply
+Sauce AI,Mobile Apps,$9.4k,$175k,1.5x,https://trustmrr.com/startup/sauce-ai
+Stealth Venture,Mobile Apps,$3.9k,$160k,3.4x,https://trustmrr.com/startup/stealth-venture-26
+Yeira LMS,Education,$4.8k,$135k,2.3x,https://trustmrr.com/startup/yeira-lms
+Private Enterprise,SaaS,$16k,$500k,2.6x,https://trustmrr.com/startup/private-enterprise-22
+NOCAPMOCAP,Artificial Intelligence,$1.5k,$120k,6.8x,https://trustmrr.com/startup/nocapmocap
+Photo Sharing,Utilities,$49k,$1.5M,2.5x,https://trustmrr.com/startup/photo-sharing
+BettrBot,SaaS,$8.2k,$140k,1.4x,https://trustmrr.com/startup/bettrbot
+Zescale,SaaS,$4.3k,$150k,2.9x,https://trustmrr.com/startup/zescale
+BambooVPN,Mobile Apps,$17k,$800k,3.9x,https://trustmrr.com/startup/bamboovpn
+TrackSSL,Developer Tools,$4.7k,$129k,2.3x,https://trustmrr.com/startup/trackssl
+Werewolf : Undercover,Games,$3k,$115k,3.2x,https://trustmrr.com/startup/werewolf-undercover
+AppGen,Artificial Intelligence,$11k,$200k,1.6x,https://trustmrr.com/startup/appgen
+FaceKit,Mobile Apps,$28k,$1M,3.0x,https://trustmrr.com/startup/facekit
+Knightvision,Content Creation,$26k,$225k,0.7x,https://trustmrr.com/startup/knightvision
+Rotgen.org,Artificial Intelligence,$10k,$210k,1.7x,https://trustmrr.com/startup/rotgen-org
+Bibly,Mobile Apps,$6.2k,$230k,3.1x,https://trustmrr.com/startup/bibly
+Virvid.ai,Content Creation,$12k,$250k,1.7x,https://trustmrr.com/startup/virvid-ai
+Social Networking App B2C,Social Media,$3.5k,$150k,3.6x,https://trustmrr.com/startup/social-networking-app-b2c
+Glowly,Mobile Apps,$8.7k,$120k,1.1x,https://trustmrr.com/startup/glowly
+Confidential Startup,Content Creation,$11k,$300k,2.3x,https://trustmrr.com/startup/confidential-startup-16
+bullgpt.io,SaaS,$53k,$520k,0.8x,https://trustmrr.com/startup/bullgpt-io
+Pushouse,E-commerce,$35k,$875k,2.1x,https://trustmrr.com/startup/pushouse
+Launch Club,Marketing,$49k,$3M,5.1x,https://trustmrr.com/startup/launch-club
+Dena AI,Artificial Intelligence,$3.3k,$390k,9.8x,https://trustmrr.com/startup/dena-ai
+Hyrox Fitness App,Health & Fitness,$34k,$3.8M,9.2x,https://trustmrr.com/startup/hyrox-fitness-app
+Changelogfy,SaaS,$1.8k,$120k,5.6x,https://trustmrr.com/startup/changelogfy
+SocialKit,Developer Tools,$2.1k,$115k,4.5x,https://trustmrr.com/startup/socialkit
+Voltage Learning,Education,$2.2k,$125k,4.7x,https://trustmrr.com/startup/voltage-learning
+HeyRudy,Artificial Intelligence,$2k,$179k,7.6x,https://trustmrr.com/startup/heyrudy
+Popular link in bio.,Content Creation,$21k,$800k,3.1x,https://trustmrr.com/startup/popular-link-in-bio
+Project A,Entertainment,$84k,$5M,4.9x,https://trustmrr.com/startup/project-a
+Roman AI,Artificial Intelligence,$9k,$150k,1.4x,https://trustmrr.com/startup/roman-ai
+DunkMax,Mobile Apps,$8.6k,$215k,2.1x,https://trustmrr.com/startup/dunkmax
+Virlo,SaaS,$26k,$1M,3.2x,https://trustmrr.com/startup/virlo
+B2C & B2B Proxy Company,Developer Tools,$24k,$250k,0.9x,https://trustmrr.com/startup/b2c-b2b-proxy-company
+StudyScout,SaaS,$11k,$220k,1.7x,https://trustmrr.com/startup/studyscout
+Open-Claw.org,Artificial Intelligence,$1.5k,$100k,5.7x,https://trustmrr.com/startup/open-claw-org
+novoads,Artificial Intelligence,$2.4k,$400k,14.1x,https://trustmrr.com/startup/novoads
+Flex Aura – AI Fitness App with 250k Users (Organic Growth),Health & Fitness,$1.7k,$120k,5.8x,https://trustmrr.com/startup/flex-aura-ai-fitness-app-with-250k-users-organic-growth
+Tradevipe,SaaS,$2.3k,$140k,5.2x,https://trustmrr.com/startup/tradevipe
+Book The Move,Marketing,$8.8k,$375k,3.5x,https://trustmrr.com/startup/book-the-move
+Facemetrics AI,Artificial Intelligence,$2.4k,$125k,4.3x,https://trustmrr.com/startup/facemetrics-ai
+GenPPT,Artificial Intelligence,$8.9k,$295k,2.8x,https://trustmrr.com/startup/genppt
+Anonymous Startup,Mobile Apps,$4.9k,$200k,3.4x,https://trustmrr.com/startup/anonymous-startup-19
+Brainrot.mov,Content Creation,$16k,$300k,1.5x,https://trustmrr.com/startup/brainrot-mov
+TurboStarter,Developer Tools,$9.7k,$150k,1.3x,https://trustmrr.com/startup/turbostarter
+WRITING9,Education,$5.1k,$200k,3.2x,https://trustmrr.com/startup/writing9
+Conductor,Developer Tools,$40k,$1.3M,2.6x,https://trustmrr.com/startup/conductor
+FeedGuardians,Social Media,$6.3k,$200k,2.7x,https://trustmrr.com/startup/feedguardians
+BuildMyAgent.io,,$20k,$289k,1.2x,https://trustmrr.com/startup/buildmyagent-io
+ThreadCam,Design Tools,$6.2k,$200k,2.7x,https://trustmrr.com/startup/threadcam
+Voice Cleaner,,$10k,$400k,3.2x,https://trustmrr.com/startup/voice-cleaner
+Private Location Intelligence API platform,SaaS,$13k,$499k,3.2x,https://trustmrr.com/startup/private-location-intelligence-api-platform
+BENO ONE,Artificial Intelligence,$3.6k,$220k,5.2x,https://trustmrr.com/startup/beno-one
+ToneAdapt,SaaS,$8.1k,$750k,7.7x,https://trustmrr.com/startup/toneadapt
+Magic,Artificial Intelligence,$5.4k,$190k,2.9x,https://trustmrr.com/startup/magic
+WriteHybrid,Artificial Intelligence,$4.9k,$235k,4.0x,https://trustmrr.com/startup/writehybrid
+SetSmart,SaaS,$36k,$499k,1.1x,https://trustmrr.com/startup/setsmart
+Lunchbreak,Education,$36k,$1.5M,3.5x,https://trustmrr.com/startup/lunchbreak
+Music tech startup,Artificial Intelligence,$5.9k,$150k,2.1x,https://trustmrr.com/startup/music-tech-startup
+Last Followed,Social Media,$6.9k,$130k,1.6x,https://trustmrr.com/startup/last-followed
+SEO STACK,SaaS,$17k,$1M,5.0x,https://trustmrr.com/startup/seo-stack
+1Lookup,SaaS,$410k,$10M,2.0x,https://trustmrr.com/startup/1lookup
+MediaFast,Marketing,$5.4k,$200k,3.1x,https://trustmrr.com/startup/mediafast-1
+Catalister,E-commerce,$8.5k,$300k,2.9x,https://trustmrr.com/startup/catalister
+PHOTO AI STUDIO,Artificial Intelligence,$2.7k,$500k,15.5x,https://trustmrr.com/startup/photo-ai-studio
+StoryHero,SaaS,$7.4k,$150k,1.7x,https://trustmrr.com/startup/storyhero
+SEO Automation Platform,Marketing,$14k,$800k,4.7x,https://trustmrr.com/startup/seo-automation-platform
+FootballGPT,Artificial Intelligence,$3.1k,$200k,5.4x,https://trustmrr.com/startup/footballgpt
+ValidateThat,Design Tools,$1.1k,$110k,8.4x,https://trustmrr.com/startup/validatethat
+nutrIA,Mobile Apps,$12k,$700k,5.1x,https://trustmrr.com/startup/nutria
+Hidden Business,Artificial Intelligence,$8.3k,$175k,1.8x,https://trustmrr.com/startup/hidden-business-8
+AI Image Editor,Mobile Apps,$5.3k,$100k,1.6x,https://trustmrr.com/startup/ai-image-editor
+Plutio (Super Work AI),Productivity,$19k,$3M,13.3x,https://trustmrr.com/startup/plutio-super-work-ai
+Mad Dog Alpha AI,Fintech,$861,$100k,9.7x,https://trustmrr.com/startup/mad-dog-alpha-ai
+Kortex-Notebooklm,Artificial Intelligence,$18k,$150k,0.7x,https://trustmrr.com/startup/kortex-notebooklm
+LarryBrain - Openclaw Marketplace,Artificial Intelligence,$4.2k,$120k,2.4x,https://trustmrr.com/startup/larrybrain-openclaw-marketplace
+Stellar,Analytics,$1.8k,$159k,7.5x,https://trustmrr.com/startup/stellar
+ReelMoney,Marketing,$2k,$150k,6.1x,https://trustmrr.com/startup/reelmoney
+Prototipal,Developer Tools,$4k,$360k,7.5x,https://trustmrr.com/startup/prototipal
+Slop cannon,Artificial Intelligence,$110k,$190k,0.1x,https://trustmrr.com/startup/slop-cannon
+Komposo,Design Tools,$2.8k,$100k,2.9x,https://trustmrr.com/startup/komposo
+Stealth Company,Education,$4.5k,$290k,5.4x,https://trustmrr.com/startup/stealth-company-2
+PostNitro,Content Creation,$3.9k,$1.0M,21.2x,https://trustmrr.com/startup/postnitro
+Getlead,Marketing,$12k,$149k,1.0x,https://trustmrr.com/startup/getlead
+Gronk,Artificial Intelligence,$21k,$1.1M,4.3x,https://trustmrr.com/startup/gronk
+PostPlanify,Social Media,$3.1k,$100k,2.7x,https://trustmrr.com/startup/postplanify
+Idle Browser Game (PC/Mobile),Games,$3k,$250k,6.9x,https://trustmrr.com/startup/idle-browser-game-pc-mobile
+Private Enterprise,Marketing,$44k,$1M,1.9x,https://trustmrr.com/startup/hype-social-media-strategy
+LUCIDE AI,Artificial Intelligence,$9.2k,$210k,1.9x,https://trustmrr.com/startup/lucide-ai
+Intervly,Artificial Intelligence,$401,$100k,20.8x,https://trustmrr.com/startup/intervly
+Kome,Artificial Intelligence,$2.4k,$200k,6.9x,https://trustmrr.com/startup/kome
+Stealth Venture,,$132k,$3M,1.9x,https://trustmrr.com/startup/stealth-venture-15
+Tasy AI GmbH,Artificial Intelligence,$3.6k,$180k,4.2x,https://trustmrr.com/startup/tasy-ai-gmbh
+Private Venture,Mobile Apps,$7.7k,$150k,1.6x,https://trustmrr.com/startup/flowfy-budget-expenses
+Study Guard,Education,$2.6k,$150k,4.9x,https://trustmrr.com/startup/study-guard
+Lancer.app,Sales,$18k,$700k,3.2x,https://trustmrr.com/startup/lancer-app
+WAZZAP AI,Artificial Intelligence,$3.3k,$280k,6.8x,https://trustmrr.com/startup/wazzap-ai
+Hidden Business,Education,$7k,$478k,5.7x,https://trustmrr.com/startup/hidden-business-15
+Treendly,SaaS,$146,$100k,57.1x,https://trustmrr.com/startup/treendly
+Glamour,Mobile Apps,$16k,$110k,0.6x,https://trustmrr.com/startup/glamour
+Stealth Company,Education,$6.1k,$100k,1.4x,https://trustmrr.com/startup/stealth-company-1
+Attivita24,Marketplace,$9.1k,$500k,4.7x,https://trustmrr.com/startup/attivita24
+Stat AI,Artificial Intelligence,$21k,$250k,1.0x,https://trustmrr.com/startup/stat-ai
+The Brazil Girl,Education,$7.5k,$250k,2.8x,https://trustmrr.com/startup/the-brazil-girl
+RTMP.IN,Social Media,$7.5k,$420k,4.7x,https://trustmrr.com/startup/rtmp-in
+Profile Tracer,Fintech,$2.5k,$750k,24.7x,https://trustmrr.com/startup/profile-tracer
+Eloking,E-commerce,$4k,$300k,6.4x,https://trustmrr.com/startup/eloking
+Anonymous Bot for Slack,SaaS,$572,$100k,14.6x,https://trustmrr.com/startup/anonymous-bot-for-slack
+Tutti,Artificial Intelligence,$1.8k,$150k,7.1x,https://trustmrr.com/startup/tutti
+RoastGPT,Artificial Intelligence,$5.8k,$100k,1.4x,https://trustmrr.com/startup/roastgpt
+Vid Maker Pro,Content Creation,$4.4k,$125k,2.4x,https://trustmrr.com/startup/vid-maker-pro
+Replymer,Marketing,$8k,$180k,1.9x,https://trustmrr.com/startup/belord-llc
+EverythingWeather,Mobile Apps,$14k,$1M,5.9x,https://trustmrr.com/startup/everythingweather
+ChatGPT Toolbox,Artificial Intelligence,$2.2k,$230k,8.7x,https://trustmrr.com/startup/chatgpt-toolbox
+MyFrank,SaaS,$4.5k,$600k,11.2x,https://trustmrr.com/startup/myfrank
+Stealth Company (Global Job Board),Recruiting & HR,$5.1k,$500k,8.2x,https://trustmrr.com/startup/stealth-company-global-job-board
+CheatMate,Artificial Intelligence,$6.3k,$200k,2.6x,https://trustmrr.com/startup/cheatmate
+Doors Delivered,E-commerce,$83k,$650k,0.6x,https://trustmrr.com/startup/doors-delivered
+Search+,Artificial Intelligence,$7k,$110k,1.3x,https://trustmrr.com/startup/search
+AutoContent API,Content Creation,$17k,$1.2M,5.9x,https://trustmrr.com/startup/autocontent-api
+AI Interview Copilot,Artificial Intelligence,$26k,$850k,2.7x,https://trustmrr.com/startup/ai-interview-copilot
+Hidden Business,Mobile Apps,$22k,$350k,1.3x,https://trustmrr.com/startup/stealth-app-1
+Low Content AI,Artificial Intelligence,$27k,$800k,2.4x,https://trustmrr.com/startup/low-content-ai
+Advise.so,Community,$20k,$470k,1.9x,https://trustmrr.com/startup/advise-so
+TranslateMom,Artificial Intelligence,$4.3k,$120k,2.3x,https://trustmrr.com/startup/translatemom
+*** OF PROMPT OÜ,Artificial Intelligence,$23k,$1M,3.6x,https://trustmrr.com/startup/of-prompt-o
+ScreenSage Pro,Content Creation,$2.6k,$500k,15.7x,https://trustmrr.com/startup/screensage-pro
+Bookedin,Sales,$7.5k,$1M,11.2x,https://trustmrr.com/startup/bookedin
+ChatEDU Inc.,Education,$9.1k,$220k,2.0x,https://trustmrr.com/startup/chatedu-inc
+Tactical Football Analysis,News & Magazines,$7.1k,$200k,2.3x,https://trustmrr.com/startup/tactical-football-analysis
+StoryShort,Content Creation,$23k,$1.2M,4.4x,https://trustmrr.com/startup/storyshort
+PROSP,Artificial Intelligence,$98k,$1M,0.8x,https://trustmrr.com/startup/prosp
+Writingmate.ai,Artificial Intelligence,$6.7k,$250k,3.1x,https://trustmrr.com/startup/writingmate-ai
+Linkar,Fintech,$5.3k,$200k,3.1x,https://trustmrr.com/startup/linkar
+LocalRank.so,Marketing,$31k,$1.8M,4.8x,https://trustmrr.com/startup/localrank-so
+Followr,Artificial Intelligence,$4.4k,$400k,7.5x,https://trustmrr.com/startup/followr
+Patty Stealth Saas,,$9.9k,$697k,5.9x,https://trustmrr.com/startup/patty-stealth-saas
+GoStudio AI,Artificial Intelligence,$2.5k,$100k,3.3x,https://trustmrr.com/startup/gostudio-ai
+FitCal,Health & Fitness,$1.1k,$150k,10.9x,https://trustmrr.com/startup/fitcal
+Private Enterprise,Mobile Apps,$6.2k,$1.5M,20.0x,https://trustmrr.com/startup/private-enterprise-6
+U Never Sleep,Artificial Intelligence,$1.6k,$101k,5.3x,https://trustmrr.com/startup/u-never-sleep
+Confidential Startup,,$4.9k,$600k,10.3x,https://trustmrr.com/startup/confidential-startup-7
+VoiceCheap,Artificial Intelligence,$3.4k,$1M,24.5x,https://trustmrr.com/startup/voicecheap
+TheMailSupply,Marketing,$648,$240k,30.9x,https://trustmrr.com/startup/themailsupply
+Interactive Video SaaS,SaaS,$30k,$2.1M,6.0x,https://trustmrr.com/startup/interactive-video-saas
+Vidgenie.ai,Artificial Intelligence,$12k,$800k,5.7x,https://trustmrr.com/startup/vidgenie-ai
+OpenAssistantGPT,Artificial Intelligence,$2.4k,$150k,5.3x,https://trustmrr.com/startup/openassistantgpt
+Stealth Company,Education,$2.7k,$500k,15.6x,https://trustmrr.com/startup/stealth-company-7
+Blainy,Artificial Intelligence,$1.5k,$112k,6.1x,https://trustmrr.com/startup/blainy
+TF Invites – Automate TestFlight for iOS & iPhone Apps | Apple TestFlight,Developer Tools,$19,$1M,4386.0x,https://trustmrr.com/startup/tf-invites-automate-testflight-for-ios-iphone-apps-apple-testflight
+Documind Ltd,Artificial Intelligence,$1.2k,$100k,6.8x,https://trustmrr.com/startup/documind-ltd
+Hidden Business,Analytics,$13k,$1M,6.2x,https://trustmrr.com/startup/hidden-business-5
+AI SuitUp,Artificial Intelligence,$2.5k,$350k,11.6x,https://trustmrr.com/startup/ai-suitup
+Aera Browser,Artificial Intelligence,$220,$939k,355.7x,https://trustmrr.com/startup/aera-browser
+Yakkr Growth,Content Creation,$4.4k,$750k,14.3x,https://trustmrr.com/startup/yakkr-growth
+TALAB LTD,Mobile Apps,$147,$250k,172.3x,https://trustmrr.com/startup/talab-ltd
+Airticler,Artificial Intelligence,$202,$100k,41.3x,https://trustmrr.com/startup/airticler
+Blupry,No-Code,$48,$100k,173.6x,https://trustmrr.com/startup/buynocodeapps-ltd
+Spawned.com,Developer Tools,$0,$120k,,https://trustmrr.com/startup/spawned-com
+GenCity,Artificial Intelligence,$0,$250k,,https://trustmrr.com/startup/gencity
+Based Labs AI,Artificial Intelligence,$0,$2.2M,,https://trustmrr.com/startup/based-labs-ai
+dopaAI,Artificial Intelligence,$0,$1M,,https://trustmrr.com/startup/dopaai
+Speel.co,SaaS,$0,$500k,,https://trustmrr.com/startup/speel-co
+Stealth Company,Entertainment,$0,$150k,,https://trustmrr.com/startup/stealth-company-20
+ORKA,SaaS,$0,$150k,,https://trustmrr.com/startup/orka
+AI Labs,Artificial Intelligence,$0,$100k,,https://trustmrr.com/startup/ai-labs`;
+
+export const BEST_DEALS_CSV_DATA = `Site İsim,30d,Asking Price,Multi
+Outstand.so,$5.8k,$130k,1.8x
+Backlinker AI,$23k,$350k,1.3x
+NextjobConnect LLC,$5.7k,$100k,1.5x
+Practiceme,$3.4k,$40k,1.0x
+RunAds.ai,$10k,$200k,1.7x
+Synta,$13k,$200k,1.3x
+RareRoles,$5k,$85k,1.4x
+OSM Tactics,$1.6k,$28k,1.5x
+BETIX,$2k,$17k,0.7x
+ColdSire,$17k,$215k,1.1x
+Leadbomb,$2.6k,$25k,0.8x
+ClassyAction,$598,$13k,1.8x
+Pxlsafe — Premiere Pro and After Effects extensions,$7.6k,$95k,1.0x
+Marky,$22k,$495k,1.8x
+Contentbase,$1k,$10k,0.8x
+Mental health subscription site,$1.5k,$35k,2.0x
+Risenote,$1.2k,$25k,1.7x
+FishingAI,$2k,$30k,1.2x
+CoupleAI,$7.2k,$80k,0.9x
+imposter․ai,$41k,$270k,0.6x
+Sauce AI,$9.3k,$175k,1.6x
+Sufler - teleprompter,$5.1k,$80k,1.3x
+Zescale,$4k,$40k,0.8x
+Stealth Venture,$9.9k,$150k,1.3x
+Verbatik AI (Web + iOS app),$3.5k,$70k,1.7x
+Casora,$826,$10k,1.0x
+lifeflexia,$6.4k,$50k,0.7x
+LoraAI,$2.6k,$55k,1.8x
+Ploxto,$3.2k,$60k,1.6x
+Reloop,$677,$10k,1.2x
+AbMaxx,$3.9k,$58k,1.2x
+Knightvision,$25k,$225k,0.7x
+Nestique,$1.5k,$28k,1.6x
+Rotgen.org,$9.2k,$210k,1.9x
+"PhotoAI — $150 MRR, 13 AI Models, Mobile App 80% Built",$1.2k,$15k,1.1x
+Brawler,$12k,$200k,1.3x
+Gold List,$2k,$20k,0.8x
+Virvid.ai,$12k,$250k,1.7x
+Veo3 Gen,$1.2k,$20k,1.4x
+HeightMax - Grow Taller,$2k,$39k,1.6x
+TinyAdz,$3.9k,$75k,1.6x
+Glowly,$8k,$120k,1.2x
+GarageLab,$673,$15k,1.9x
+GlobalSeo,$2k,$40k,1.6x
+Roman AI,$9.2k,$150k,1.4x
+AppAlchemy,$8.8k,$45k,0.4x
+FastPrank,$2.9k,$25k,0.7x
+B2C & B2B Proxy Company,$24k,$250k,0.9x
+StudyScout,$11k,$220k,1.7x
+Xquik,$5.3k,$99k,1.6x
+TechScreen,$1.3k,$25k,1.6x
+MyClaw.host,$4.1k,$27k,0.5x
+Nocodable Components,$1.4k,$28k,1.6x
+DropPop,$4.1k,$55k,1.1x
+Prompt Sloth,$693,$15k,1.8x
+JuggleHire,$633,$12k,1.6x
+Bloom,$7.4k,$55k,0.6x
+AI text Humanizer - Netherlands & Belgium,$2.2k,$35k,1.3x
+Brainrot.mov,$15k,$300k,1.6x
+Limesnap,$738,$15k,1.7x
+Pulld,$540,$10k,1.5x
+Looktara,$1.2k,$25k,1.8x
+Reclip.io,$1.7k,$32k,1.6x
+Easy App Reports by Beyond Analytics,$4.2k,$95k,1.9x
+Arc Raiders Map,$1.6k,$35k,1.8x
+Game Assessment Prep,$9.5k,$70k,0.6x
+BuildMyAgent.io,$21k,$289k,1.2x
+GenZWrite,$3.5k,$70k,1.6x
+Pluma,$1.7k,$36k,1.8x
+ClawRapid,$1.4k,$20k,1.2x
+Last Followed,$6.9k,$130k,1.6x
+AI Photo Headshot Generator,$446,$10k,1.9x
+divinetalk,$859,$14k,1.4x
+StoryHero,$7.4k,$150k,1.7x
+Kortex-Notebooklm,$22k,$150k,0.6x
+AI Image Editor,$4.8k,$100k,1.7x
+CrowdField,$4.9k,$18k,0.3x
+AlgoFuse.ai,$5.9k,$47k,0.7x
+Slop cannon,$113k,$190k,0.1x
+BP Consumer App (Lifestyle),$2.3k,$50k,1.8x
+Getlead,$11k,$149k,1.1x
+InstaTrack,$2k,$13k,0.6x
+SportsApi Pro,$1.9k,$39k,1.7x
+e Libray Bokks and Audiobooks,$2.4k,$38k,1.3x
+LUCIDE AI,$8.9k,$210k,2.0x
+Lingo Widget: Daily Vocabolary,$1.6k,$30k,1.6x
+Career Hound,$20k,$98k,0.4x
+Delta Sports,$820,$15k,1.5x
+Stealth Venture,$129k,,1.9x
+Ai Enhancer and Video,$4.6k,$80k,1.5x
+Private Venture,$8.2k,$150k,1.5x
+Anonymous Mobile App,$3.6k,$60k,1.4x
+SHANNON LAB LLC,$2.6k,$21k,0.7x
+Glamour,$16k,$110k,0.6x
+Stealth Company,$5.9k,$100k,1.4x
+Stat AI,$21k,$250k,1.0x
+RoastGPT,$5.6k,$100k,1.5x
+Replymer,$8k,$180k,1.9x
+iOS App Growing Fast with SEO,$428,$10k,1.9x
+Cool Game,$4.1k,$95k,1.9x
+Bokha,$634,$12k,1.6x
+Doors Delivered,$84k,$650k,0.6x
+Search+,$7k,$110k,1.3x
+Hidden Business,$5.5k,$100k,1.5x
+Leadverse,$3.4k,$40k,1.0x
+Wizlogo,$1.5k,$28k,1.5x
+Hidden Business,$22k,$350k,1.3x
+PodSpot,$5.2k,$99k,1.6x
+Advise.so,$21k,$470k,1.8x
+Presentia AI,$1.4k,$30k,1.8x
+ShortsAuto.ai,$2.1k,$50k,2.0x
+Docswrite,$832,$18k,1.8x
+Aura For Creators,$1.8k,$10k,0.5x`;
+
+export function detectCategory(name: string): string {
+  const n = name.toLowerCase();
+  if (n.includes('ai') || n.includes('gpt') || n.includes('bot') || n.includes('notebooklm') || n.includes('intelligence') || n.includes('generator') || n.includes('humanizer') || n.includes('sens')) {
+    return 'Artificial Intelligence';
+  }
+  if (n.includes('app') || n.includes('ios') || n.includes('mobile') || n.includes('teleprompter') || n.includes('sufler')) {
+    return 'Mobile Apps';
+  }
+  if (n.includes('seo') || n.includes('marketing') || n.includes('lead') || n.includes('ad') || n.includes('prank') || n.includes('track') || n.includes('influence')) {
+    return 'Marketing';
+  }
+  if (n.includes('saas') || n.includes('platform') || n.includes('automation') || n.includes('system') || n.includes('widget')) {
+    return 'SaaS';
+  }
+  if (n.includes('game') || n.includes('brawler') || n.includes('tactic') || n.includes('sport')) {
+    return 'Games';
+  }
+  if (n.includes('shop') || n.includes('e-commerce') || n.includes('delivery') || n.includes('deliver') || n.includes('store') || n.includes('deal')) {
+    return 'E-commerce';
+  }
+  if (n.includes('design') || n.includes('logo') || n.includes('photo') || n.includes('image') || n.includes('editor') || n.includes('effects') || n.includes('video') || n.includes('art') || n.includes('poster') || n.includes('pxlsafe')) {
+    return 'Design Tools';
+  }
+  if (n.includes('develop') || n.includes('component') || n.includes('code') || n.includes('api') || n.includes('tool')) {
+    return 'Developer Tools';
+  }
+  if (n.includes('health') || n.includes('mind') || n.includes('life') || n.includes('fit') || n.includes('grow')) {
+    return 'Health & Fitness';
+  }
+  if (n.includes('study') || n.includes('quiz') || n.includes('school') || n.includes('prep') || n.includes('education')) {
+    return 'Education';
+  }
+  return 'SaaS'; // default fallback
+}
+
+export function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+export function getBestDealsListings(): StartupListing[] {
+  const result: StartupListing[] = [];
+  const lines = BEST_DEALS_CSV_DATA.trim().split('\n');
+  
+  lines.forEach((line, index) => {
+    if (!line.trim()) return;
+    if (line.startsWith('Site İsim,')) return;
+    
+    const parts = parseCSVLine(line);
+    if (parts.length >= 4) {
+      const startup_name = parts[0];
+      const revenue_30d = parts[1] || "$0";
+      const asking_price = parts[2] || "N/A";
+      const multiple = parts[3] || "N/A";
+      
+      const category = detectCategory(startup_name);
+      
+      result.push({
+        id: `best-deal-${index}`,
+        startup_name,
+        category,
+        short_description: "🔥 Verified High-Yield Best Deal. Curated premium asset with verified financials.",
+        revenue_30d,
+        asking_price,
+        multiple: multiple || "N/A",
+        source_platform: 'best_deals',
+        original_url: `https://trustmrr.com/startup/${startup_name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+        is_best_deal: true
+      });
+    }
+  });
+  
+  return result;
+}
+
+export function parseMultipleVal(multStr: string): number {
+  if (!multStr) return 999;
+  const cleaned = multStr.toLowerCase().replace(/[^0-9.]/g, '');
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 999 : parsed;
+}
+
+export function getClientListings(): StartupListing[] {
+  const baseListings: StartupListing[] = [];
+  const lines = RAW_CSV_DATA.trim().split('\n');
+  
+  lines.forEach((line, index) => {
+    if (!line) return;
+    if (line.startsWith('startup_name,')) return;
+    
+    const parts = parseCSVLine(line);
+    if (parts.length >= 6) {
+      const startup_name = parts[0];
+      let category = parts[1] ? parts[1].trim() : "";
+      if (!category) {
+        category = "Other";
+      }
+      const revenue_30d = parts[2];
+      const asking_price = parts[3];
+      const multiple = parts[4] ? parts[4].trim() : "N/A";
+      const original_url = parts[5];
+      
+      const isUnder2Multiple = parseMultipleVal(multiple) < 2.0;
+      
+      baseListings.push({
+        id: index + 1,
+        startup_name,
+        category,
+        short_description: "Premium SaaS acquisition opportunity with verified monthly recurring revenue channels.",
+        revenue_30d,
+        asking_price,
+        multiple: multiple || "N/A",
+        source_platform: 'trustmrr',
+        original_url,
+        is_best_deal: isUnder2Multiple
+      });
+    }
+  });
+  
+  // Create unique list of best deals to see which ones are not in the old list
+  const bestDeals = getBestDealsListings();
+  const baseNamesLower = new Set(baseListings.map(item => item.startup_name.toLowerCase().trim()));
+  
+  const uniqueBestDeals = bestDeals.filter(
+    deal => !baseNamesLower.has(deal.startup_name.toLowerCase().trim())
+  );
+  
+  // Combine base listings with the different ones from the new list (which we mark with is_best_deal: true)
+  return [...uniqueBestDeals, ...baseListings];
+}

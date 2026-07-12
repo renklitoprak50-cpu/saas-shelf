@@ -1,0 +1,86 @@
+import { NextResponse } from 'next/server';
+import { StartupListing } from '@/src/types';
+import defaultListings from '@/data/listings.json';
+
+// In-memory backing array for local development
+let inMemoryListings: StartupListing[] = [...(defaultListings as StartupListing[])];
+
+// Helper to parse complex pricing entries (e.g. "$130k", "$4.2M", "10000") to numeric values
+function parsePriceToNumber(priceStr: string): number {
+  if (!priceStr) return 0;
+  const cleaned = priceStr.toLowerCase().replace(/[\$,\s]/g, '');
+  if (cleaned.endsWith('m')) {
+    const val = parseFloat(cleaned.replace('m', ''));
+    return isNaN(val) ? 0 : val * 1000000;
+  }
+  if (cleaned.endsWith('k')) {
+    const val = parseFloat(cleaned.replace('k', ''));
+    return isNaN(val) ? 0 : val * 1000;
+  }
+  const val = parseFloat(cleaned);
+  return isNaN(val) ? 0 : val;
+}
+
+export async function GET() {
+  return NextResponse.json(inMemoryListings);
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const {
+      startup_name,
+      category,
+      short_description,
+      revenue_30d,
+      asking_price,
+      multiple,
+      source_platform,
+      original_url
+    } = body;
+
+    // Validate required inputs
+    if (!startup_name || !category || !short_description || !asking_price || !original_url) {
+      return NextResponse.json(
+        { error: "Missing required listing fields: startup_name, category, short_description, asking_price, and original_url are required." },
+        { status: 400 }
+      );
+    }
+
+    // Check asking price restriction (Only listings >= $10,000)
+    const numericPrice = parsePriceToNumber(asking_price);
+    if (numericPrice < 10000) {
+      return NextResponse.json(
+        { error: `Minimum asking price restriction is $10,000. Your parsed listing price is $${numericPrice.toLocaleString()}.` },
+        { status: 400 }
+      );
+    }
+
+    const newListing: StartupListing = {
+      id: `custom-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      startup_name: String(startup_name).trim(),
+      category: String(category).trim(),
+      short_description: String(short_description).trim(),
+      revenue_30d: revenue_30d ? String(revenue_30d).trim() : "$0",
+      asking_price: String(asking_price).trim(),
+      multiple: multiple ? String(multiple).trim() : "N/A",
+      source_platform: source_platform ? String(source_platform).trim().toLowerCase() : "trustmrr",
+      original_url: String(original_url).trim(),
+      created_at: new Date().toISOString()
+    };
+
+    inMemoryListings.unshift(newListing);
+    return NextResponse.json(newListing, { status: 201 });
+  } catch (e: any) {
+    return NextResponse.json(
+      { error: e?.message || "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// Internal helper - not exported
+function resetInMemoryListings() {
+  inMemoryListings = [...(defaultListings as StartupListing[])];
+  return inMemoryListings.length;
+}
